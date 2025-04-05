@@ -4,7 +4,7 @@ import numpy as np
 class Client:
     def __init__(self, choices: list[str]):
         self.openai_emb_model = "text-embedding-3-small"
-        self.choices = choices
+        self.choices = [choice.lower().strip() for choice in choices]
         self.client = None
 
         try:
@@ -22,9 +22,12 @@ class Client:
             self.choice_embeddings[choice] = response.data[0].embedding
         
     def classify(self, answer: str) -> str:
+        # Lowercase and strip the answer
+        answer = answer.lower().strip()
+        
         # First try direct matching
         for choice in self.choices:
-            if answer.lower().strip() == choice.lower().strip():
+            if answer == choice:
                 return choice
                 
         # If no direct match, use embeddings for semantic similarity
